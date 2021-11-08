@@ -1,0 +1,14 @@
+version: '3'
+services:
+  watcher:
+    build: .
+    container_name: medicbridge
+    environment:
+      - FOO
+    ports:
+      - "6200:6200"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../docker-compose:/destination
+      - ../services:/source
+    command: node /app/src/index.js

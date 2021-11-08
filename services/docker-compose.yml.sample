@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  api:
+    image: localhost:5000/bridge/api:<version>
+    container_name: cht-api
+    networks:
+      - medic-net
+    ports:
+      - "5500:5500"
+    environment:
+      - FOO
+
+  sentinel:
+    image: localhost:5000/bridge/sentinel:<version>
+    container_name: cht-sentinel
+    ports:
+      - "5501:5501"
+    networks:
+      - medic-net
+    environment:
+      - FOO
+
+networks:
+  medic-net:
+    name: medic-net
