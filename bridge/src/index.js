@@ -9,28 +9,28 @@ const dockerComposeFilePath = path.join(destinationPath, 'docker-compose.yml');
 
 const composeCommand = (options, command='docker-compose') => {
   return new Promise((resolve, reject) => {
-    const childProcess = spawn(command, options, { cwd: destinationPath });
+    const childProcess = spawn(command, options, { cwd: destinationPath, stdio: ['ignore', 'pipe', 'pipe'] });
     childProcess.on('error', (err) => reject(err));
 
-    const result = {
-      exitCode: null,
-      err: '',
-      out: ''
-    };
+    let err;
 
-    childProcess.stdout.on('data', (chunk) => result.out += chunk.toString());
-    childProcess.stderr.on('data', (chunk) => result.err += chunk.toString());
+    childProcess.stdout.on('data', console.log);
+    childProcess.stderr.on('data', (chunk) => {
+      chunk = chunk.toString();
+      console.log(chunk);
+      err += chunk;
+    });
 
     childProcess.on('exit', (exitCode) => {
-      result.exitCode = exitCode;
-      console.log(result);
-      exitCode ? reject(result) : resolve(result);
+      exitCode ? reject(err) : resolve();
     });
   });
 };
 
 const stopContainers = async () => {
-  await composeCommand(['down', '--remove-orphans']);
+  if (fs.existsSync(dockerComposeFilePath)) {
+    await composeCommand(['down', '--remove-orphans']);
+  }
 };
 
 const overwriteComposeFile = async (sourcePath, destPath) => {
@@ -72,7 +72,9 @@ app.all('/upgrade', async (req, res) => {
     await overwriteComposeFile(dockerComposeSourcePath, dockerComposeFilePath);
     await startContainers();
 
-    res.send('Upgrade successful');
+    const success = `Upgrade to version ${version} was successfull`;
+    console.log(success);
+    res.send(success);
   } catch (err) {
     console.error(err);
     res.status(500).send(JSON.stringify(err));
@@ -80,5 +82,5 @@ app.all('/upgrade', async (req, res) => {
 });
 
 startUp();
-app.listen(6200);
-console.log('listening on port 6200');
+app.listen(5100);
+console.log('listening on port 5100');

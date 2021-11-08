@@ -7,7 +7,7 @@ services:
     networks:
       - medic-net
     ports:
-      - "5500:5500"
+      - "5200:5200"
     environment:
       - FOO
 
@@ -15,7 +15,7 @@ services:
     image: localhost:5000/bridge/sentinel:<version>
     container_name: cht-sentinel
     ports:
-      - "5501:5501"
+      - "5300:5300"
     networks:
       - medic-net
     environment:
