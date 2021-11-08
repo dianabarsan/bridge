@@ -5,7 +5,7 @@ services:
     image: localhost:5000/bridge/api:<version>
     container_name: cht-api
     networks:
-      - medic-net
+      - cht-net
     ports:
       - "5200:5200"
     environment:
@@ -17,10 +17,10 @@ services:
     ports:
       - "5300:5300"
     networks:
-      - medic-net
+      - cht-net
     environment:
       - FOO
 
 networks:
-  medic-net:
-    name: medic-net
+  cht-net:
+    name: cht-net

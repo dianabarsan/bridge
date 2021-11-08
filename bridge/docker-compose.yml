@@ -2,7 +2,7 @@ version: '3'
 services:
   watcher:
     build: .
-    container_name: medicbridge
+    container_name: chtbridge
     environment:
       - FOO
     ports:
