@@ -44,7 +44,7 @@ const overwriteComposeFile = async (sourcePath, destPath) => {
 
 const startContainers = async (fileName) => {
   await composeCommand(['pull'], fileName);
-  await composeCommand(['up', '-d'], fileName);
+  await composeCommand(['up', '-d', '--remove-orphans'], fileName);
 };
 
 const startUp = async () => {
