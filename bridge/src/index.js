@@ -30,13 +30,6 @@ const composeCommand = (args, fileName = CHT_COMPOSE, command='docker-compose') 
   });
 };
 
-const stopContainers = async (fileName) => {
-  const composePath = path.join(destinationPath, fileName);
-  if (fs.existsSync(composePath)) {
-    await composeCommand(['stop'], fileName);
-  }
-};
-
 const overwriteComposeFile = async (sourcePath, destPath) => {
   const contents = await fs.promises.readFile(sourcePath, 'utf-8');
   await fs.promises.writeFile(destPath, contents);
@@ -68,7 +61,6 @@ const upgrade = async (serviceGroup, composeFileName, req, res) => {
   }
 
   try {
-    await stopContainers(composeFileName);
     await overwriteComposeFile(dockerComposeSourcePath, path.join(destinationPath, composeFileName));
     await startContainers(composeFileName);
 
