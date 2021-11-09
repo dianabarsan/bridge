@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  rapidpro:
+    image: localhost:5000/bridge/rapidpro:<version>
+    container_name: cht-rapidpro
+    networks:
+      - cht-net
+    ports:
+      - "5400:5400"
+    environment:
+      - FOO
+
+networks:
+  cht-net:
+    name: cht-net

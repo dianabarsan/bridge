@@ -15,7 +15,10 @@ main()
   build_version $version "api"
   build_version $version "sentinel"
 
-  sed "s/<version>/$version/g" ./docker-compose.yml.template > ./docker-compose-$version.yml
+  sed "s/<version>/$version/g" ./docker-compose-cht.yml.template > ./docker-compose-cht-$version.yml
+
+  build_version $version "rapidpro"
+  sed "s/<version>/$version/g" ./docker-compose-rapidpro.yml.template > ./docker-compose-rapidpro-$version.yml
 }
 
 build_version()
