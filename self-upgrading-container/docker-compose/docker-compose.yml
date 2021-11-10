@@ -12,7 +12,7 @@ services:
       - "5800-5801:5800"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /home/diana/projects/bridge/self-upgrading-container/docker-compose:/docker-compose:ro
+      - <absolute path to this folder>:/docker-compose:ro
     command: node /app/src/index.js
 
 networks:

@@ -1,6 +1,6 @@
 {
   "name": "self-upgrading-container",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "description": "",
   "main": "src/index.js",
   "scripts": {},
