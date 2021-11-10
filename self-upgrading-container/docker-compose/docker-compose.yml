@@ -2,9 +2,6 @@ version: '3'
 services:
   self-upgrading-container:
     image: localhost:5000/bridge/self-upgrading-container:latest
-    restart: always
-    networks:
-      - cht-net
     deploy:
       mode: replicated
       replicas: 1
@@ -14,7 +11,3 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - <absolute path to this folder>:/docker-compose:ro
     command: node /app/src/index.js
-
-networks:
-  cht-net:
-    name: cht-net

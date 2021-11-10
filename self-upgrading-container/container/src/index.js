@@ -35,20 +35,16 @@ const scaleUp = () => {
   return composeCommand(['up', '-d', '--scale', `${NAME}=2`, '--no-recreate', NAME]);
 };
 
-const scaleDown = () => {
-  return composeCommand(['up', '-d', '--scale', `${NAME}=1`, '--no-recreate', NAME]);
-};
-
 const cleanupAfterUpgrade = async () => {
   try {
     const containerIds = await getCurrentContainerIds();
+    const hostname = await composeCommand([], 'hostname');
     if (containerIds.length === 1) {
       return;
     }
 
     console.log('Cleaning up old containers after an upgrade');
-    await killOldContainers(containerIds);
-    await scaleDown();
+    await killOldContainers(containerIds, hostname);
   } catch (err) {
     console.error('Error while cleaning up old containers', err);
   }
@@ -64,8 +60,12 @@ const startNewContainer = async () => {
   await scaleUp();
 };
 
-const killOldContainers = async (containerIds) => {
-  const containersToRemove = containerIds.slice(0, 1)
+const killOldContainers = async (containerIds, hostname) => {
+  const containerToKeep = containerIds.find(id => id.trim().startsWith(hostname.trim()));
+  if (!containerToKeep) {
+    throw new Error('Cant find container to keep');
+  }
+  const containersToRemove = containerIds.filter(id => id !== containerToKeep);
   await composeCommand(['stop', ...containersToRemove], 'docker');
   await composeCommand(['rm', ...containersToRemove], 'docker');
 };
@@ -92,7 +92,11 @@ app.all('/upgrade', async (req, res) => {
   }
 });
 
-cleanupAfterUpgrade();
+try {
+  cleanupAfterUpgrade();
+} catch (err) {
+  console.error(err);
+}
 
 console.log('listening on port 5800');
 app.listen(5800);

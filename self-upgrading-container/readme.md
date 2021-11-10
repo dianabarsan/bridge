@@ -28,13 +28,12 @@ To start the initial container, run `docker-compose -f ./docker-compose/docker-c
   - the new container should be answering on `localhost:5081`. Check that it runs the new version.  
   - the container has a startup mechanism where it:
     - lists all running relevant containers
-    - kills all containers except the first one
-    - does a scale down (--scale service=1) (otherwise docker-compose will boot up two containers on next run). If running the scale down without the kill, the "latest" container gets removed instead of the "oldest" (so exactly the opposite of what we want). 
+    - stops and removes all containers except for itself (removal is required so docker-compose doesn't reuse on next scale-up). 
 
 You can repeat these steps, toggling between ports. 
 
 ### Caveats: 
 - You must use `docker-compose` v1, otherwise range port mapping won't work (see https://github.com/docker/compose/issues/8530) and you won't be able to scale up. 
-- You must place an absolute path to your docker compose file in the docker compose file, otherwise the scale up container volume doesn't map correctly, and it won't have access to the docker-compose.yml file. I'm still trying to find a workaround for this.  
+- You must place an absolute path to your docker compose file in the docker compose file, otherwise the scale up container volume doesn't resolve correctly. (at startup time, docker-compose transforms relative paths to absolute paths, and it will resolve this path relative to the container instead of the host, and as a result the path will be broken).   
 - nginx should direct traffic to the running container
 
