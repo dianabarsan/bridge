@@ -35,3 +35,5 @@ You can repeat these steps changing versions.
 ### Caveats:
 - You must place an absolute path to your docker compose file in the docker compose file, otherwise the scale up container volume doesn't resolve correctly. (at startup time, docker-compose transforms relative paths to absolute paths, and it will resolve this path relative to the container instead of the host, and as a result the path will be broken).
 - This should work with both docker-compose v1 and docker-compose v2, BUT docker-compose v2 will throw an error in the `docker-compose up` process when the old container is killed, where v1 knows how to handle that and continues to pipe logs.  
+- While there are two containers active, nginx could route to both of them. 
+- the container uses docker-compose v1 because it's the stable release

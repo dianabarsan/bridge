@@ -7,7 +7,7 @@ const NAME = 'blue-green';
 const NGINX_CONTAINER_NAME = 'nginx-for-blue-green';
 const composePath = path.resolve('/docker-compose');
 
-const composeCommand = (args, command='docker-compose') => {
+const command = (command='docker-compose', args=[] ) => {
   return new Promise((resolve, reject) => {
     const childProcess = spawn(command, args, { cwd: composePath, stdio: ['ignore', 'pipe', 'pipe'], detached: true });
     childProcess.unref();
@@ -33,16 +33,16 @@ const composeCommand = (args, command='docker-compose') => {
 }
 
 const scaleUp = () => {
-  return composeCommand(['up', '-d', '--scale', `${NAME}=2`, '--no-recreate', NAME]);
+  return command('docker-compose', ['up', '-d', '--scale', `${NAME}=2`, '--no-recreate', NAME]);
 };
 
 const restartNginx = async () => {
   const containerId = await getNginxContainerId();
-  await composeCommand(['exec', containerId, 'nginx', '-s', 'reload'], 'docker');
+  await command('docker', ['exec', containerId, 'nginx', '-s', 'reload']);
 };
 
 const getHostname = async () => {
-  const hostname = await composeCommand([], 'hostname');
+  const hostname = await command('hostname');
   return hostname.trim();
 };
 
@@ -61,17 +61,17 @@ const cleanupAfterUpgrade = async () => {
 };
 
 const getCurrentContainerIds = async () => {
-  const output = await composeCommand(['ps', '-q']);
+  const output = await command('docker-compose', ['ps', '-q']);
   return output.split('\n').map((id) => id.trim()).filter(id => id);
 }
 
 const startNewContainer = async () => {
-  await composeCommand(['pull']);
+  await command('docker-compose', ['pull']);
   await scaleUp();
 };
 
 const getNginxContainerId = async () => {
-  const containerId = await composeCommand(['ps', '-f', `name=${NGINX_CONTAINER_NAME}`, '-q'], 'docker');
+  const containerId = await command('docker', ['ps', '-f', `name=${NGINX_CONTAINER_NAME}`, '-q']);
   return containerId.trim();
 };
 
@@ -89,8 +89,8 @@ const killOldContainers = async (containerIds) => {
 
   const containersToRemove = containerIds.filter(id => !containersToKeep.includes(id));
   console.log('Removing containers', containersToRemove);
-  await composeCommand(['stop', ...containersToRemove], 'docker');
-  await composeCommand(['rm', ...containersToRemove], 'docker');
+  await command('docker', ['stop', ...containersToRemove]);
+  await command('docker', ['rm', ...containersToRemove]);
 };
 
 const app = express();
