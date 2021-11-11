@@ -17,5 +17,5 @@ services:
       - "5800"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /home/diana/projects/bridge/blue-green-nginx/docker-compose:/docker-compose
+      - <absolute path to this folder>:/docker-compose
     command: node /app/src/index.js
