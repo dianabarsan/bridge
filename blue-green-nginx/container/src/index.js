@@ -49,11 +49,12 @@ const getHostname = async () => {
 const cleanupAfterUpgrade = async () => {
   try {
     const containerIds = await getCurrentContainerIds();
+    await restartNginx();
     if (containerIds.length > 2) {
       console.log('Cleaning up old containers after an upgrade');
       await killOldContainers(containerIds);
+      await restartNginx();
     }
-    await restartNginx();
   } catch (err) {
     console.error('Error while cleaning up old containers', err);
   }
